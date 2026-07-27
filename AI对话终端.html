@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KIMI K3 · AI 对话终端</title>
+<!-- ★ 网站图标（favicon），直接嵌入你提供的 SVG ★ -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%201075%201024%22%20version%3D%221.1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22128%22%20height%3D%22128%22%3E%3Cpath%20d%3D%22M1049.6%200m0%20186.1632l0%20651.6736q0%20186.1632-186.1632%20186.1632l-651.6736%200q-186.1632%200-186.1632-186.1632l0-651.6736q0-186.1632%20186.1632-186.1632l651.6736%200q186.1632%200%20186.1632%20186.1632Z%22%20fill%3D%22%23000000%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M605.7984%20459.9808c57.1392%201.28%20104.1408%2052.3264%20104.1408%20115.1488v232.5504a2.048%202.048%200%200%201-2.048%202.0992h-99.9936a2.048%202.048%200%200%201-2.048-2.048l-1.7408-294.0928c0-1.2288-2.2528-1.4848-2.6112-0.256-13.312%2043.9296-52.736%2056.32-99.84%2056.32H329.984a2.048%202.048%200%200%200-2.048%202.048v235.9296a2.048%202.048%200%200%201-2.0992%202.0992H220.4672a2.048%202.048%200%200%201-2.048-2.048V241.5104a2.048%202.048%200%200%201%202.048-2.048h105.3696a2.048%202.048%200%200%201%202.048%202.048v216.32c0%201.1264%200.9728%202.048%202.0992%202.048h135.2192a2.048%202.048%200%200%200%201.8944-1.2288l96.9216-218.0096a2.048%202.048%200%200%201%201.8944-1.2288h116.7872c1.536%200%202.56%201.5872%201.8944%202.9696l-66.2528%20142.2848c-19.7632%2036.1984-34.304%2061.8496-67.2768%2072.8064-1.1776%200.3584-0.9216%202.4576%200.3584%202.4576h54.3744z%22%20fill%3D%22%23FFFFFF%22%3E%3C%2Fpath%3E%3Cpath%20d%3D%22M752.9472%20227.9936c-11.776%209.8304-19.456%2025.9072-19.456%2050.176%200%2022.784%207.2704%2040.448%2018.1248%2050.9952-5.632%209.3696-11.4176%2015.9744-15.7696%2019.456-0.7168%200.6144-0.2048%202.2528%200.7168%202.2016l64.512-4.6592c14.336-1.1264%2026.624-6.5536%2036.9664-15.7696%2012.3904-10.496%2019.456-28.5696%2019.456-52.224%200-24.2688-7.0656-40.3456-19.456-50.176a64.7168%2064.7168%200%200%200-43.008-14.7968c-16.384%200-30.3616%204.9664-42.0864%2014.7968z%22%20fill%3D%22%23007AFF%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ============ 主题变量（黑夜默认） ============ */
+:root, [data-theme="dark"]{
+  --bg:#06060c; --line:rgba(255,255,255,.09); --txt:#eceef7; --dim:#8b90a8; --faint:#5b5f75;
+  --acc1:#6d6bff; --acc2:#b26bff; --acc3:#4de3ff;
+  --glass:rgba(255,255,255,.045); --glass2:rgba(255,255,255,.08);
+  --code-bg:#0d0e17; --menu-bg:#15161f;
+  --user-bg1:rgba(109,107,255,.22); --user-bg2:rgba(178,107,255,.16); --user-line:rgba(139,124,255,.3);
+}
+/* ============ 白天模式 ============ */
+[data-theme="light"]{
+  --bg:#f4f5fa; --line:rgba(0,0,0,.1); --txt:#1a1c2e; --dim:#5a5e78; --faint:#9a9eb5;
+  --glass:rgba(255,255,255,.65); --glass2:rgba(255,255,255,.85);
+  --code-bg:#eceef5; --menu-bg:#ffffff;
+  --user-bg1:rgba(109,107,255,.14); --user-bg2:rgba(178,107,255,.1); --user-line:rgba(109,107,255,.35);
+}
+[data-theme="light"]{ --gradb:.72 }   /* 白天模式下渐变文字压暗 */
+*{box-sizing:border-box;scrollbar-width:thin;scrollbar-color:rgba(128,128,128,.3) transparent}
+*::-webkit-scrollbar{width:6px;height:6px}
+*::-webkit-scrollbar-thumb{background:rgba(128,128,128,.25);border-radius:99px}
+*::-webkit-scrollbar-track{background:transparent}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--txt);font-family:'Noto Sans SC','Space Grotesk',sans-serif;overflow:hidden;transition:background .4s,color .4s}
+.grotesk{font-family:'Space Grotesk','Noto Sans SC',sans-serif}
+
+.aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;transition:opacity .4s}
+.aurora i{position:absolute;border-radius:50%;filter:blur(100px);opacity:.45;mix-blend-mode:screen;animation:drift 20s ease-in-out infinite alternate}
+.aurora i:nth-child(1){width:55vw;height:55vw;left:-15vw;top:-22vw;background:radial-gradient(circle,var(--acc1),transparent 65%)}
+.aurora i:nth-child(2){width:45vw;height:45vw;right:-12vw;top:8vh;background:radial-gradient(circle,var(--acc2),transparent 65%);animation-delay:-7s}
+.aurora i:nth-child(3){width:42vw;height:42vw;left:22vw;bottom:-24vw;background:radial-gradient(circle,var(--acc3),transparent 65%);animation-delay:-13s}
+[data-theme="light"] .aurora{opacity:.35}
+@keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(6vw,5vh) scale(1.15)}}
+.grid-overlay{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(128,128,128,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(128,128,128,.06) 1px,transparent 1px);
+  background-size:54px 54px;
+  -webkit-mask-image:radial-gradient(ellipse 85% 65% at 50% 35%,#000 15%,transparent 75%);
+  mask-image:radial-gradient(ellipse 85% 65% at 50% 35%,#000 15%,transparent 75%)}
+
+.glass{background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.grad-text{background:linear-gradient(92deg,var(--acc1),var(--acc2) 55%,var(--acc3));-webkit-background-clip:text;background-clip:text;color:transparent;filter:brightness(var(--gradb,1)) saturate(1.05)}
+.icon-btn{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:var(--dim);border:1px solid var(--line);background:var(--glass);transition:.25s;cursor:pointer;flex-shrink:0;position:relative}
+.icon-btn:hover{color:var(--txt);border-color:var(--acc1);transform:translateY(-1px)}
+.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--acc1),var(--acc2));display:grid;place-items:center;font-family:'Space Grotesk';font-weight:700;font-size:20px;color:#fff;box-shadow:0 8px 28px -8px var(--acc1);flex-shrink:0}
+
+/* ---- 模型折叠下拉（多配置分组） ---- */
+.model-dropdown{position:relative}
+.model-current{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;font-size:12.5px;font-weight:500;color:var(--txt);cursor:pointer;background:var(--glass);border:1px solid var(--line);transition:.25s;user-select:none}
+.model-current:hover{border-color:var(--acc1)}
+.model-current .dot{width:7px;height:7px;border-radius:50%;background:#3ddc84;flex-shrink:0}
+.model-current .dot.off{background:#ff5a6e}
+.model-current .chev{transition:.3s;font-size:10px;color:var(--dim)}
+.model-dropdown.open .chev{transform:rotate(180deg)}
+.model-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:260px;max-height:60vh;overflow-y:auto;background:var(--menu-bg);border:1px solid var(--line);border-radius:16px;padding:6px;z-index:50;box-shadow:0 18px 50px -12px rgba(0,0,0,.5);opacity:0;pointer-events:none;transform:translateY(-6px);transition:.22s}
+.model-dropdown.open .model-menu{opacity:1;pointer-events:auto;transform:none}
+.mi-group{font-size:10.5px;color:var(--faint);letter-spacing:.06em;padding:9px 12px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.model-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:11px;cursor:pointer;transition:.18s;font-size:13px}
+.model-item:hover{background:var(--glass2)}
+.model-item.active{background:linear-gradient(135deg,var(--acc1),var(--acc2));color:#fff}
+.model-item .st{margin-left:auto;font-size:11px;opacity:.75;flex-shrink:0}
+.model-item .mi-name{font-weight:500}
+.model-item .mi-id{font-size:10.5px;opacity:.6;margin-top:1px}
+
+/* ---- 消息 ---- */
+.msg{animation:rise .45s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.user-bubble{max-width:82%;margin-left:auto;background:linear-gradient(135deg,var(--user-bg1),var(--user-bg2));border:1px solid var(--user-line);border-radius:20px 20px 6px 20px;padding:12px 16px;line-height:1.75;font-size:14.5px;word-break:break-word}
+.user-imgs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.user-imgs img{width:110px;height:110px;object-fit:cover;border-radius:12px;border:1px solid var(--line)}
+.file-chip{display:inline-flex;align-items:center;gap:7px;background:var(--glass2);border:1px solid var(--line);border-radius:10px;padding:6px 11px;font-size:12px;margin:3px 4px 3px 0}
+.ai-avatar{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,var(--acc1),var(--acc2));display:grid;place-items:center;font-family:'Space Grotesk';font-weight:700;font-size:14px;color:#fff;flex-shrink:0;margin-top:2px}
+.md{font-size:14.5px;line-height:1.85;word-break:break-word;min-width:0}
+.md p{margin:.4em 0}
+.md h1,.md h2,.md h3,.md h4{font-weight:700;margin:.9em 0 .45em;line-height:1.4}
+.md h1{font-size:1.3em}.md h2{font-size:1.18em}.md h3{font-size:1.06em}
+.md ul,.md ol{padding-left:1.4em;margin:.4em 0}
+.md li{margin:.25em 0}
+.md a{color:var(--acc3);text-decoration:none;border-bottom:1px dashed var(--acc3)}
+.md code{font-family:'JetBrains Mono',monospace;font-size:.88em;background:var(--glass2);padding:.15em .45em;border-radius:6px}
+.md blockquote{border-left:3px solid var(--acc1);padding:.2em 0 .2em 1em;margin:.6em 0;color:var(--dim);background:var(--glass);border-radius:0 10px 10px 0}
+.md table{border-collapse:collapse;margin:.6em 0;font-size:.92em;width:100%}
+.md th,.md td{border:1px solid var(--line);padding:.45em .8em;text-align:left}
+.md th{background:var(--glass2)}
+.md hr{border:0;border-top:1px solid var(--line);margin:1em 0}
+.think-box{font-size:13px;color:var(--dim);font-style:italic;background:var(--glass);border:1px dashed var(--line);border-radius:12px;padding:10px 14px;margin-bottom:10px;white-space:pre-wrap;word-break:break-word}
+.think-box b{font-style:normal;color:var(--acc3);font-size:11px;letter-spacing:.1em;filter:brightness(var(--gradb,1))}
+.code-wrap{position:relative;margin:.7em 0}
+.code-wrap pre{margin:0!important;border-radius:14px;border:1px solid var(--line);overflow-x:auto;background:var(--code-bg)!important}
+.code-wrap pre code{background:transparent;padding:1em!important;font-size:13px;line-height:1.7}
+.copy-code{position:absolute;top:8px;right:8px;font-size:11px;padding:4px 10px;border-radius:8px;background:var(--glass2);border:1px solid var(--line);color:var(--dim);cursor:pointer;transition:.2s;z-index:2}
+.copy-code:hover{color:var(--txt)}
+
+.cursor{display:inline-block;width:9px;height:1.05em;border-radius:3px;background:linear-gradient(var(--acc1),var(--acc2));animation:blink 1s steps(2) infinite;vertical-align:-3px;margin-left:2px}
+@keyframes blink{50%{opacity:0}}
+.dots{display:inline-flex;gap:5px;padding:8px 2px}
+.dots i{width:7px;height:7px;border-radius:50%;background:linear-gradient(135deg,var(--acc1),var(--acc2));animation:bounce 1.2s infinite}
+.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-6px);opacity:1}}
+
+/* ---- 输入区 ---- */
+#input{flex:1;background:transparent;border:0;outline:0;resize:none;color:var(--txt);font-size:14.5px;line-height:1.7;max-height:160px;padding:9px 4px;font-family:inherit;min-width:0}
+#input::placeholder{color:var(--faint)}
+.input-card{transition:.3s;border-radius:24px}
+.input-card:focus-within{border-color:var(--acc1);box-shadow:0 0 0 3px color-mix(in srgb,var(--acc1) 18%,transparent)}
+.input-card.dragover{border-color:var(--acc3);box-shadow:0 0 0 3px color-mix(in srgb,var(--acc3) 22%,transparent)}
+.send-btn{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--acc1),var(--acc2));display:grid;place-items:center;transition:.25s;flex-shrink:0;border:0;cursor:pointer;color:#fff}
+.send-btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px -8px var(--acc1)}
+.stop-btn{width:42px;height:42px;border-radius:14px;background:rgba(255,80,100,.14);border:1px solid rgba(255,80,100,.4);color:#ff8095;display:grid;place-items:center;cursor:pointer;flex-shrink:0;transition:.25s}
+.stop-btn:hover{background:rgba(255,80,100,.25)}
+.thumb{position:relative;width:60px;height:60px;border-radius:12px;overflow:hidden;border:1px solid var(--line);flex-shrink:0}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb button,.fchip button{position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.65);color:#fff;font-size:11px;line-height:1;border:0;cursor:pointer;display:grid;place-items:center}
+.fchip{position:relative;display:inline-flex;align-items:center;gap:6px;background:var(--glass2);border:1px solid var(--line);border-radius:11px;padding:8px 24px 8px 10px;font-size:12px;flex-shrink:0}
+.fchip .fs{opacity:.6;font-size:10.5px}
+
+.chip{padding:12px 16px;border-radius:16px;font-size:13px;color:var(--dim);cursor:pointer;transition:.25s;text-align:left;line-height:1.6}
+.chip:hover{color:var(--txt);border-color:var(--acc1);transform:translateY(-3px);background:var(--glass2)}
+.toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%) translateY(12px);background:var(--menu-bg);border:1px solid var(--line);color:var(--txt);font-size:13px;padding:10px 20px;border-radius:999px;opacity:0;transition:.3s;z-index:99;pointer-events:none;box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.error-box{background:rgba(255,90,90,.08);border:1px solid rgba(255,90,90,.3);color:#e88;border-radius:14px;padding:12px 16px;font-size:13.5px;line-height:1.7;white-space:pre-wrap}
+.hidden{display:none!important}
+
+/* ---- 主题面板 ---- */
+.theme-dropdown{position:relative}
+.theme-panel{position:absolute;top:calc(100% + 10px);right:0;width:262px;background:var(--menu-bg);border:1px solid var(--line);border-radius:18px;padding:16px;z-index:60;box-shadow:0 18px 50px -12px rgba(0,0,0,.5);opacity:0;pointer-events:none;transform:translateY(-6px);transition:.22s;cursor:default}
+.theme-dropdown.open .theme-panel{opacity:1;pointer-events:auto;transform:none}
+.swatch{width:34px;height:34px;border-radius:11px;cursor:pointer;border:2px solid transparent;transition:.2s;flex-shrink:0;padding:0}
+.swatch:hover{transform:scale(1.1)}
+.swatch.active{border-color:var(--txt);box-shadow:0 0 0 3px var(--line)}
+.hex-input{flex:1;background:var(--glass);border:1px solid var(--line);border-radius:10px;padding:8px 11px;color:var(--txt);font-size:12.5px;outline:0;font-family:'JetBrains Mono',monospace;min-width:0}
+.hex-input:focus{border-color:var(--acc1)}
+.tlabel{font-size:11px;color:var(--dim);letter-spacing:.08em;margin:14px 0 8px}
+.apply-btn{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--acc1),var(--acc2));border:0;cursor:pointer;flex-shrink:0;transition:.2s}
+.apply-btn:hover{transform:scale(1.08)}
+.pk-wrap{display:flex;gap:10px;user-select:none}
+.pk-sv{position:relative;flex:1;height:130px;border-radius:12px;cursor:crosshair;touch-action:none;overflow:hidden;border:1px solid var(--line)}
+.pk-sv .lay1{position:absolute;inset:0;background:linear-gradient(to right,#fff,rgba(255,255,255,0))}
+.pk-sv .lay2{position:absolute;inset:0;background:linear-gradient(to top,#000,rgba(0,0,0,0))}
+.pk-sv .pk-dot{position:absolute;width:13px;height:13px;border:2.5px solid #fff;border-radius:50%;box-shadow:0 0 5px rgba(0,0,0,.6);transform:translate(-50%,-50%);pointer-events:none}
+.pk-hue{position:relative;width:14px;height:130px;border-radius:8px;cursor:pointer;touch-action:none;flex-shrink:0;
+  background:linear-gradient(to bottom,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)}
+.pk-hue .pk-dot{position:absolute;left:50%;width:16px;height:6px;border:2px solid #fff;border-radius:4px;box-shadow:0 0 5px rgba(0,0,0,.6);transform:translate(-50%,-50%);pointer-events:none}
+.pk-recs{display:flex;gap:7px;flex-wrap:wrap}
+.pk-recs .swatch{width:30px;height:30px;border-radius:9px}
+.pk-recs .swatch:hover{transform:scale(1.12)}
+.pk-preview{display:flex;align-items:center;gap:9px;margin-top:12px}
+.pk-preview .pv{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);flex-shrink:0}
+.pk-preview span{font-size:11px;color:var(--dim)}
+.pv-btn{cursor:pointer;transition:.2s;padding:0}
+.pv-btn:hover{transform:scale(1.12);box-shadow:0 0 0 3px var(--line)}
+/* ---- 底部免责声明 ---- */
+.foot-note{text-align:center;font-size:10.5px;color:var(--faint);padding:7px 0 2px;cursor:default;position:relative;user-select:none}
+.foot-note .cr{display:block;max-height:0;opacity:0;overflow:hidden;transform:translateY(4px);transition:max-height .45s cubic-bezier(.2,.8,.2,1),opacity .4s,transform .45s cubic-bezier(.2,.8,.2,1)}
+.foot-note:hover .cr{max-height:40px;opacity:1;transform:none}
+.foot-note .cr a{color:var(--dim);text-decoration:none;border-bottom:1px dashed var(--acc3)}
+.foot-note .cr a:hover{color:var(--acc3)}
+
+</style>
+</head>
+<body>
+<div class="aurora"><i></i><i></i><i></i></div>
+<div class="grid-overlay"></div>
+
+<div class="relative z-10 flex flex-col h-full max-w-4xl mx-auto px-4">
+
+  <!-- ===== 顶栏 ===== -->
+  <header class="flex items-center justify-between gap-3 py-4 flex-wrap">
+    <div class="flex items-center gap-3">
+      <div class="logo">K</div>
+      <div>
+        <h1 class="grotesk font-bold text-lg leading-tight">KIMI <span class="grad-text">K3</span></h1>
+        <p class="text-xs" style="color:var(--dim)">Moonshot AI · 多模型对话终端</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+
+      <!-- 模型折叠下拉（多配置分组） -->
+      <div class="model-dropdown" id="modelDD">
+        <div class="model-current" id="modelCur">
+          <span class="dot" id="modelDot"></span>
+          <span id="modelCurName">加载中…</span>
+          <span class="chev">▼</span>
+        </div>
+        <div class="model-menu" id="modelMenu"></div>
+      </div>
+
+      <!-- 主题面板 -->
+      <div class="theme-dropdown" id="themeDD">
+        <button class="icon-btn" title="自定义主题色">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.6-.7 1.6-1.6 0-.4-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.7-1.6 1.6-1.6h1.9c3 0 5.7-2.5 5.7-5.7C22 6 17.5 2 12 2z"/></svg>
+        </button>
+        <div class="theme-panel" id="themePanel">
+          <div class="tlabel" style="margin-top:0">预设主题色</div>
+          <div class="flex gap-2 flex-wrap" id="swatches">
+            <div class="swatch" data-c1="#6d6bff" data-c2="#b26bff" data-c3="#4de3ff" style="background:linear-gradient(135deg,#6d6bff,#b26bff)" title="幻紫"></div>
+            <div class="swatch" data-c1="#ff6b9d" data-c2="#ff9d6b" data-c3="#ffd66b" style="background:linear-gradient(135deg,#ff6b9d,#ff9d6b)" title="蜜桃"></div>
+            <div class="swatch" data-c1="#0fd090" data-c2="#0fb8d0" data-c3="#4de3ff" style="background:linear-gradient(135deg,#0fd090,#0fb8d0)" title="翡翠"></div>
+            <div class="swatch" data-c1="#ff8a3d" data-c2="#ff5a3d" data-c3="#ffc93d" style="background:linear-gradient(135deg,#ff8a3d,#ff5a3d)" title="落日"></div>
+            <div class="swatch" data-c1="#3d9bff" data-c2="#3dd6ff" data-c3="#8affff" style="background:linear-gradient(135deg,#3d9bff,#3dd6ff)" title="冰蓝"></div>
+          </div>
+
+          <div class="tlabel">自定义颜色</div>
+          <div class="pk-wrap">
+            <div class="pk-sv" id="pkSV">
+              <div class="lay1"></div><div class="lay2"></div>
+              <div class="pk-dot" id="pkSVDot"></div>
+            </div>
+            <div class="pk-hue" id="pkHue"><div class="pk-dot" id="pkHueDot"></div></div>
+          </div>
+
+          <div class="flex gap-2 mt-3">
+            <input class="hex-input" id="hexInput" placeholder="#6d6bff" maxlength="7">
+            <button class="apply-btn" id="hexApply" title="确认应用此颜色">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>
+            </button>
+          </div>
+
+          <div class="tlabel">相近推荐色</div>
+          <div class="pk-recs" id="pkRecs"></div>
+
+          <div class="pk-preview">
+            <button class="pv pv-btn" id="pkCur" title="点击恢复为已保存的颜色"></button>
+            <span>当前（已保存）<br>点击可还原</span>
+            <div class="pv" id="pkTemp"></div>
+            <span id="pkTempLabel">与当前一致</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 白天黑夜切换 -->
+      <button id="modeBtn" class="icon-btn" title="切换白天/黑夜">
+        <svg id="modeIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        <svg id="modeIconSun" class="hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4"/></svg>
+      </button>
+
+      <!-- 清空 -->
+      <button id="clearBtn" class="icon-btn" title="清空对话">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== 聊天区 ===== -->
+  <main id="chat" class="flex-1 overflow-y-auto py-3 space-y-7">
+    <div id="welcome" class="msg pt-10 pb-6 text-center">
+      <div class="mx-auto mb-6 logo" style="width:72px;height:72px;border-radius:22px;font-size:34px">K</div>
+      <h2 class="grotesk text-4xl md:text-5xl font-bold mb-3">你好，我是 <span class="grad-text">Kimi</span></h2>
+      <p class="text-sm mb-2" style="color:var(--dim)">支持图片 + 文档（PDF / Word / Excel / PPT / TXT / MD / 代码等）解析</p>
+      <p class="text-xs mb-8" style="color:var(--faint)">对话仅保存在当前页面，刷新后清空</p>
+      <div class="grid md:grid-cols-2 gap-3 max-w-2xl mx-auto text-left" id="chipGrid"></div>
+    </div>
+  </main>
+
+  <!-- ===== 输入区 ===== -->
+  <footer class="pb-4 pt-1">
+    <div id="inputCard" class="input-card glass p-3">
+      <div id="imgBar" class="hidden flex-wrap gap-2 px-1 pb-2"></div>
+      <div class="flex items-end gap-2">
+        <button id="attachBtn" class="icon-btn" title="上传文件（图片或文档）">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.4 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+        </button>
+        <textarea id="input" rows="1" placeholder="向 Kimi 提问…（Enter 发送，支持粘贴/拖入图片与文档）"></textarea>
+        <button id="sendBtn" class="send-btn" title="发送">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+        </button>
+        <button id="stopBtn" class="stop-btn hidden" title="停止生成">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="3"/></svg>
+        </button>
+      </div>
+      <div class="flex items-center justify-between mt-2 px-1 text-[11px]" style="color:var(--faint)">
+        <span id="modelHint">正在加载配置…</span>
+        <span id="imgCount">附件</span>
+      </div>
+      <div class="foot-note">
+        AI 生成的内容可能不准确，请核实重要信息。
+        <span class="cr">Copyright © 2026 AI在线工具 · All rights reserved.　联系我们：<a href="https://v.douyin.com/Fkh3966047M/" target="_blank" rel="noopener">https://v.douyin.com/Fkh3966047M/</a></span>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<input type="file" id="fileInput" multiple class="hidden"
+  accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.md,.csv,.json,.xml,.html,.js,.ts,.py,.java,.c,.cpp,.go,.rs,.sql,.yml,.yaml,.sh">
+
+<script>
+/* ================================================================
+ *  ★★★ API 配置 · 从指定链接动态拉取（支持多条配置/多提供商） ★★★
+ * ----------------------------------------------------------------
+ *  链接内容格式（JSON，可写任意多条 model_information_N）：
+ *  {
+ *    "model_information_1": { "provider":"kimi", "models":[...], "api_key":"sk-...", "base_url":"https://..." },
+ *    "model_information_2": { "provider":"kimi", "models":[...], "api_key":"sk-...", "base_url":"https://..." }
+ *  }
+ *  启动时会用每条配置各自的 /v1/models 自动校正模型名。
+ * ================================================================ */
+const API_CONFIG_URL = "https://d.kstore.dev/download/13776/data-file/model-data-interface-URL";
+
+/* ---------- 上传限制（★ 只改这里，全站生效 ★） ---------- */
+const FILE_MAX_COUNT = 15;                  // 附件数量上限（个数）
+const IMG_MAX_SIZE   = 10 * 1024 * 1024;    // 单张图片大小上限（10MB）
+const DOC_MAX_SIZE   = 20 * 1024 * 1024;    // 单个文档大小上限（20MB）
+const DOC_EXTS = ["pdf","doc","docx","xls","xlsx","ppt","pptx","txt","md","csv","json","xml","html","js","ts","py","java","c","cpp","go","rs","sql","yml","yaml","sh"];
+
+const SYSTEM_PROMPT = "你是什么AI就说自己是什么AI，由 什么公司开发的 AI 助手。请用准确、清晰、友好的方式回答，适当使用 Markdown 排版。若用户上传了文件，文件内容会以 [文件名] 开头附加在消息中，请结合文件内容回答。";
+
+/* 模型 id → 显示名映射（对不上就直接显示 id） */
+const PRETTY_NAME = {
+  "kimi-k3":"K3", "kimi-k2.6":"K2.6",
+  "kimi-k2.7-code":"Coding", "kimi-k2.7-code-highspeed":"Coding·极速",
+  "kimi-for-coding":"Coding", "kimi-for-coding-highspeed":"Coding·极速"
+};
+
+/* ================= 运行状态 ================= */
+let ENDPOINTS    = [];      // [{ label, provider, apiKey, baseURL, models:[{id,name,status}] }]
+let currentEp    = -1;      // 当前配置下标
+let currentModel = null;    // 当前模型 id
+let history      = [];
+let pendingFiles = [];
+let isStreaming  = false;
+let abortCtrl    = null;
+
+/* ================= Cookie / localStorage ================= */
+function setStore(k, v){
+  try{ localStorage.setItem(k, v); }catch(e){}
+  try{ document.cookie = `${k}=${encodeURIComponent(v)};path=/;max-age=31536000;SameSite=Lax`; }catch(e){}
+}
+function getStore(k){
+  try{ const v = localStorage.getItem(k); if (v !== null) return v; }catch(e){}
+  try{
+    const m = document.cookie.match(new RegExp("(?:^|; )" + k + "=([^;]*)"));
+    if (m) return decodeURIComponent(m[1]);
+  }catch(e){}
+  return null;
+}
+
+/* ================= DOM ================= */
+const $ = s => document.querySelector(s);
+const chatEl = $("#chat"), inputEl = $("#input"), imgBar = $("#imgBar"),
+      fileInput = $("#fileInput"), sendBtn = $("#sendBtn"), stopBtn = $("#stopBtn"),
+      inputCard = $("#inputCard"), modelHint = $("#modelHint"), imgCount = $("#imgCount"),
+      modelDD = $("#modelDD"), modelMenu = $("#modelMenu"),
+      modelCurName = $("#modelCurName"), modelDot = $("#modelDot"),
+      themeDD = $("#themeDD"), themePanel = $("#themePanel");
+
+/* ================= Markdown ================= */
+marked.setOptions({ breaks:true, gfm:true });
+function renderMarkdown(el, text){
+  el.innerHTML = marked.parse(text);
+  el.querySelectorAll("pre code").forEach(b => { try{ hljs.highlightElement(b); }catch(e){} });
+  el.querySelectorAll("pre").forEach(pre => {
+    if (pre.parentElement.classList.contains("code-wrap")) return;
+    const wrap = document.createElement("div"); wrap.className = "code-wrap";
+    pre.parentNode.insertBefore(wrap, pre); wrap.appendChild(pre);
+    const btn = document.createElement("button"); btn.className = "copy-code"; btn.textContent = "复制";
+    wrap.appendChild(btn);
+  });
+}
+document.addEventListener("click", e => {
+  if (e.target.classList.contains("copy-code")){
+    navigator.clipboard.writeText(e.target.parentElement.querySelector("code").innerText);
+    e.target.textContent = "已复制 ✓"; setTimeout(()=> e.target.textContent = "复制", 1500);
+  }
+});
+
+/* ================= 工具 ================= */
+function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function scrollBottom(force){
+  const near = chatEl.scrollHeight - chatEl.scrollTop - chatEl.clientHeight < 140;
+  if (force || near) chatEl.scrollTop = chatEl.scrollHeight;
+}
+function toast(msg){
+  const t = document.createElement("div"); t.className = "toast"; t.textContent = msg;
+  document.body.appendChild(t);
+  requestAnimationFrame(()=> t.classList.add("show"));
+  setTimeout(()=>{ t.classList.remove("show"); setTimeout(()=> t.remove(), 350); }, 2200);
+}
+function curEp(){ return ENDPOINTS[currentEp] || null; }
+function epBase(ep){
+  let u = (ep.baseURL || "").replace(/\/+$/,"");
+  if (!/\/v1$/i.test(u)) u += "/v1";
+  return u;
+}
+
+/* ================= 主题系统 ================= */
+let savedTheme = { c1:"#6d6bff", c2:"#b26bff", c3:"#4de3ff" };
+let tempColor  = null;
+
+function applyThemeVars(c1, c2, c3){
+  const r = document.documentElement.style;
+  r.setProperty("--acc1", c1);
+  r.setProperty("--acc2", c2 || c1);
+  r.setProperty("--acc3", c3 || c1);
+}
+function saveAndApplyTheme(c1, c2, c3){
+  savedTheme = { c1, c2:c2||c1, c3:c3||c1 };
+  applyThemeVars(c1, c2, c3);
+  setStore("kimi_c1", c1); setStore("kimi_c2", c2||c1); setStore("kimi_c3", c3||c1);
+  tempColor = null;
+  refreshThemePanel();
+}
+function previewTheme(c){ tempColor = c; applyThemeVars(c, c, c); refreshThemePanel(); }
+function revertTheme(){ tempColor = null; applyThemeVars(savedTheme.c1, savedTheme.c2, savedTheme.c3); refreshThemePanel(); }
+
+(function initTheme(){
+  const c1 = getStore("kimi_c1");
+  if (c1) savedTheme = { c1, c2:getStore("kimi_c2")||c1, c3:getStore("kimi_c3")||c1 };
+  applyThemeVars(savedTheme.c1, savedTheme.c2, savedTheme.c3);
+})();
+
+function applyMode(mode, save=true){
+  document.documentElement.setAttribute("data-theme", mode);
+  $("#modeIconMoon").classList.toggle("hidden", mode === "light");
+  $("#modeIconSun").classList.toggle("hidden", mode !== "light");
+  if (save) setStore("kimi_mode", mode);
+}
+(function(){ applyMode(getStore("kimi_mode") || "dark", false); })();
+$("#modeBtn").onclick = () => {
+  applyMode(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
+};
+
+/* ---- 颜色工具 ---- */
+function hexToHsv(hex){
+  let h = hex.replace("#","");
+  if (h.length === 3) h = h.split("").map(c=>c+c).join("");
+  const r = parseInt(h.slice(0,2),16)/255, g = parseInt(h.slice(2,4),16)/255, b = parseInt(h.slice(4,6),16)/255;
+  const mx = Math.max(r,g,b), mn = Math.min(r,g,b), d = mx-mn;
+  let hue = 0;
+  if (d){
+    if (mx===r) hue = ((g-b)/d)%6; else if (mx===g) hue = (b-r)/d+2; else hue = (r-g)/d+4;
+    hue *= 60; if (hue<0) hue+=360;
+  }
+  return { h:hue, s: mx ? d/mx : 0, v: mx };
+}
+function hsvToHex(h, s, v){
+  const f = (n, k=(n+h/60)%6) => v - v*s*Math.max(Math.min(k,4-k,1),0);
+  const to = x => Math.round(x*255).toString(16).padStart(2,"0");
+  return "#" + to(f(5)) + to(f(3)) + to(f(1));
+}
+function hueHex(h){ return hsvToHex(h, 1, 1); }
+
+/* ---- 颜色卡 ---- */
+let pk = { h:252, s:.6, v:.95 };
+const pkSV = $("#pkSV"), pkHue = $("#pkHue"),
+      pkSVDot = $("#pkSVDot"), pkHueDot = $("#pkHueDot"),
+      hexInput = $("#hexInput"), pkRecs = $("#pkRecs"),
+      pkCur = $("#pkCur"), pkTemp = $("#pkTemp"), pkTempLabel = $("#pkTempLabel");
+
+function syncPickerFromHex(hex){
+  const hsv = hexToHsv(hex);
+  pk = { h: Math.round(hsv.h), s: hsv.s, v: hsv.v };
+  renderPicker();
+}
+function renderPicker(){
+  pkSV.style.background = hueHex(pk.h);
+  pkSVDot.style.left = (pk.s*100) + "%";
+  pkSVDot.style.top  = ((1-pk.v)*100) + "%";
+  pkHueDot.style.top = (pk.h/360*100) + "%";
+  const hex = hsvToHex(pk.h, pk.s, pk.v);
+  if (document.activeElement !== hexInput) hexInput.value = hex;
+  pkTemp.style.background = hex;
+  buildRecs(hex);
+}
+function pickerChanged(){
+  const hex = hsvToHex(pk.h, pk.s, pk.v);
+  hexInput.value = hex;
+  previewTheme(hex);
+}
+function bindDrag(el, onMove){
+  const move = e => {
+    const r = el.getBoundingClientRect();
+    const x = Math.min(Math.max((e.clientX-r.left)/r.width, 0), 1);
+    const y = Math.min(Math.max((e.clientY-r.top)/r.height, 0), 1);
+    onMove(x, y);
+  };
+  el.addEventListener("pointerdown", e => {
+    el.setPointerCapture(e.pointerId);
+    move(e);
+    const mm = ev => move(ev);
+    el.addEventListener("pointermove", mm);
+    el.addEventListener("pointerup", () => el.removeEventListener("pointermove", mm), { once:true });
+  });
+}
+bindDrag(pkSV, (x,y) => { pk.s = x; pk.v = 1-y; renderPicker(); pickerChanged(); });
+bindDrag(pkHue, (x,y) => { pk.h = Math.round(y*360)%360; renderPicker(); pickerChanged(); });
+
+function buildRecs(baseHex){
+  const { h } = hexToHsv(baseHex);
+  const combos = [ [h,.65,.95], [h,.5,.88], [h,.78,.9], [(h+18)%360,.6,.92], [(h+342)%360,.6,.92], [h,.42,.8] ];
+  pkRecs.innerHTML = "";
+  combos.forEach(([hh,ss,vv]) => {
+    const hex = hsvToHex(Math.round(hh), ss, vv);
+    const d = document.createElement("div");
+    d.className = "swatch";
+    d.style.background = hex;
+    d.title = hex;
+    d.onclick = () => { syncPickerFromHex(hex); previewTheme(hex); };
+    pkRecs.appendChild(d);
+  });
+}
+function refreshThemePanel(){
+  pkCur.style.background = savedTheme.c1;
+  const dirty = tempColor && tempColor.toLowerCase() !== savedTheme.c1.toLowerCase();
+  pkTemp.style.background = tempColor || savedTheme.c1;
+  pkTempLabel.textContent = dirty ? "临时（未应用）" : "与当前一致";
+  document.querySelectorAll("#swatches .swatch").forEach(s => {
+    s.classList.toggle("active", s.dataset.c1.toLowerCase() === savedTheme.c1.toLowerCase() && !dirty);
+  });
+}
+hexInput.addEventListener("input", () => {
+  let v = hexInput.value.trim();
+  if (/^#?[0-9a-fA-F]{6}$/.test(v)){
+    if (!v.startsWith("#")) v = "#" + v;
+    syncPickerFromHex(v);
+    previewTheme(v);
+  }
+});
+$("#hexApply").onclick = () => {
+  let v = (tempColor || hexInput.value || "").trim();
+  if (/^#?[0-9a-fA-F]{6}$/.test(v)){
+    if (!v.startsWith("#")) v = "#" + v;
+    saveAndApplyTheme(v, v, v);
+    toast("主题色已应用并保存");
+  } else {
+    toast("颜色代码格式不对，应为 6 位，如 #6d6bff");
+  }
+};
+pkCur.onclick = () => {
+  if (!tempColor){ toast("当前已是保存的颜色"); return; }
+  syncPickerFromHex(savedTheme.c1);
+  revertTheme();
+  toast("已还原为保存的颜色");
+};
+document.querySelectorAll("#swatches .swatch").forEach(sw => {
+  sw.onclick = () => {
+    syncPickerFromHex(sw.dataset.c1);
+    saveAndApplyTheme(sw.dataset.c1, sw.dataset.c2, sw.dataset.c3);
+  };
+});
+
+/* ---- 面板开合 ---- */
+themeDD.querySelector(":scope > .icon-btn").addEventListener("click", e => {
+  e.stopPropagation();
+  const willOpen = !themeDD.classList.contains("open");
+  modelDD.classList.remove("open");
+  themeDD.classList.toggle("open");
+  if (willOpen){
+    syncPickerFromHex(savedTheme.c1);
+    refreshThemePanel();
+  } else if (tempColor){
+    revertTheme();
+  }
+});
+themePanel.addEventListener("click", e => e.stopPropagation());
+modelDD.querySelector(":scope > .model-current").addEventListener("click", e => {
+  e.stopPropagation();
+  const willOpen = !modelDD.classList.contains("open");
+  if (themeDD.classList.contains("open")){
+    themeDD.classList.remove("open");
+    if (tempColor) revertTheme();
+  }
+  modelDD.classList.toggle("open", willOpen);
+});
+document.addEventListener("click", () => {
+  const themeWasOpen = themeDD.classList.contains("open");
+  modelDD.classList.remove("open");
+  themeDD.classList.remove("open");
+  if (themeWasOpen && tempColor) revertTheme();
+});
+
+/* ================= 模型菜单（多配置分组渲染） ================= */
+function renderModelMenu(){
+  modelMenu.innerHTML = "";
+  ENDPOINTS.forEach((ep, epIdx) => {
+    const g = document.createElement("div");
+    g.className = "mi-group";
+    g.textContent = `${ep.label} · ${ep.provider}（尾号 ${ep.apiKey.slice(-5)}）`;
+    modelMenu.appendChild(g);
+    ep.models.forEach(m => {
+      const stTxt = m.status === "ok" ? "✔ 可用" : m.status === "bad" ? "✖ 不可用" : "⏳ 检测中";
+      const item = document.createElement("div");
+      item.className = "model-item" + (epIdx === currentEp && m.id === currentModel ? " active" : "");
+      item.innerHTML = `<div><div class="mi-name">${escapeHtml(m.name)}</div><div class="mi-id">${escapeHtml(m.id)}</div></div><span class="st">${stTxt}</span>`;
+      item.onclick = () => {
+        if (isStreaming){ toast("生成中，请稍候再切换模型"); return; }
+        if (m.status === "bad"){ toast("该模型当前不可用"); return; }
+        setCurrentModel(epIdx, m.id);
+        modelDD.classList.remove("open");
+      };
+      modelMenu.appendChild(item);
+    });
+  });
+}
+function setCurrentModel(epIdx, modelId){
+  currentEp = epIdx;
+  currentModel = modelId;
+  const ep = ENDPOINTS[epIdx];
+  const m = ep && ep.models.find(x => x.id === modelId);
+  modelCurName.textContent = m ? `${ep.label}·${m.name}` : modelId;
+  modelDot.classList.toggle("off", !m || m.status === "bad");
+  modelHint.textContent = `当前模型：${ep.label} · ${modelId}`;
+  setStore("kimi_defmodel", epIdx + "::" + modelId);   // 选择即保存
+  renderModelMenu();
+}
+function findFirstOk(){
+  for (let i = 0; i < ENDPOINTS.length; i++){
+    const m = ENDPOINTS[i].models.find(x => x.status === "ok");
+    if (m) return { ep:i, model:m };
+  }
+  return null;
+}
+
+/* ================= 启动：拉配置 → 逐配置校正模型名 ================= */
+async function detectAll(){
+  modelCurName.textContent = "加载配置…";
+  modelHint.textContent = "正在从链接读取 API 配置…";
+
+  /* ① 拉取远程多配置 */
+  let cfg;
+  try{
+    const r = await fetch(API_CONFIG_URL, { cache:"no-store" });
+    if (!r.ok) throw new Error("配置链接 HTTP " + r.status);
+    cfg = await r.json();
+  }catch(e){
+    modelCurName.textContent = "配置加载失败";
+    modelDot.classList.add("off");
+    modelHint.textContent = "配置链接读取失败：" + e.message;
+    toast("API 配置加载失败");
+    return;
+  }
+
+  /* ② 解析 model_information_N（按数字顺序），构建 ENDPOINTS */
+  const keys = Object.keys(cfg).filter(k => /^model_information_\d+$/i.test(k))
+    .sort((a,b) => parseInt(a.match(/\d+/)[0]) - parseInt(b.match(/\d+/)[0]));
+  ENDPOINTS = keys.map((k, i) => {
+    const c = cfg[k];
+    const seen = new Set();
+    const models = (c.models || []).filter(id => !seen.has(id) && seen.add(id))
+      .map(id => ({ id, name: PRETTY_NAME[id] || id, status:"checking" }));
+    return {
+      label   : "配置" + (i + 1),
+      provider: c.provider || "unknown",
+      apiKey  : c.api_key  || "",
+      baseURL : c.base_url || "",
+      models
+    };
+  });
+  renderModelMenu();
+
+  /* ③ 每条配置并行拉 /v1/models，校正模型名 */
+  await Promise.all(ENDPOINTS.map(async ep => {
+    let okIds = null;
+    try{
+      const r = await fetch(epBase(ep) + "/models", { headers:{ "Authorization":"Bearer " + ep.apiKey } });
+      if (r.ok){
+        const j = await r.json();
+        okIds = (j.data || []).map(x => x.id);
+      }
+    }catch(e){}
+
+    if (okIds && okIds.length){
+      const okSet = new Set(okIds);
+      const norm = s => s.toLowerCase().replace(/[^a-z0-9]/g,"");
+      ep.models = ep.models.map(m => {
+        if (okSet.has(m.id)){ m.status = "ok"; return m; }
+        const hit = okIds.find(id => norm(id).includes(norm(m.id)) || norm(m.id).includes(norm(id)));
+        if (hit){
+          m.status = "ok";
+          return { id:hit, name: PRETTY_NAME[hit] || m.name, status:"ok" };
+        }
+        m.status = "bad"; return m;
+      });
+      /* 去重（校正后可能撞名） */
+      const seen = new Set();
+      ep.models = ep.models.filter(m => !seen.has(m.id) && seen.add(m.id));
+      /* 一个都没配上 → 直接采用真实列表 */
+      if (!ep.models.some(m => m.status === "ok")){
+        ep.models = okIds.map(id => ({ id, name: PRETTY_NAME[id] || id, status:"ok" }));
+      }
+    } else {
+      ep.models.forEach(m => m.status = "ok");   // 列表拉不到先放行
+    }
+  }));
+
+  /* ④ 选择默认模型：Cookie（格式 epIdx::modelId）> 第一个可用 */
+  const wanted = getStore("kimi_defmodel");
+  let chosen = null;
+  if (wanted && wanted.includes("::")){
+    const [ei, mid] = wanted.split("::");
+    const ep = ENDPOINTS[+ei];
+    const m = ep && ep.models.find(x => x.id === mid && x.status === "ok");
+    if (m) chosen = { ep:+ei, model:m };
+  } else if (wanted){   // 兼容旧格式（只有模型 id）
+    for (let i = 0; i < ENDPOINTS.length && !chosen; i++){
+      const m = ENDPOINTS[i].models.find(x => x.id === wanted && x.status === "ok");
+      if (m) chosen = { ep:i, model:m };
+    }
+  }
+  if (!chosen) chosen = findFirstOk();
+
+  if (chosen){
+    setCurrentModel(chosen.ep, chosen.model.id);
+  } else {
+    modelCurName.textContent = "无可用模型";
+    modelDot.classList.add("off");
+    modelHint.textContent = "所有配置均未检测到可用模型，请检查 Key";
+  }
+  renderModelMenu();
+}
+
+/* ================= 请求封装（用当前配置的 key/url） ================= */
+async function postChat(body){
+  const ep = curEp();
+  const resp = await fetch(epBase(ep) + "/chat/completions", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json", "Authorization":"Bearer " + ep.apiKey },
+    body: JSON.stringify(body),
+    signal: abortCtrl.signal
+  });
+  if (resp.ok) return resp;
+  const errText = await resp.text();
+  if (resp.status === 400){
+    const m = errText.match(/invalid[ _-]?(\w+)/i);
+    const bad = m && m[1];
+    if (bad && bad in body && !["model","messages","stream"].includes(bad)){
+      delete body[bad];
+      return postChat(body);
+    }
+  }
+  throw new Error(`HTTP ${resp.status} · ${errText.slice(0, 400)}`);
+}
+function extractDelta(chunk){
+  const d = chunk?.choices?.[0]?.delta;
+  if (!d) return { content:"", thinking:"" };
+  return {
+    content : (typeof d.content === "string") ? d.content : "",
+    thinking: (typeof d.reasoning_content === "string") ? d.reasoning_content : ""
+  };
+}
+
+/* ================= 文档解析（用当前配置） ================= */
+async function parseDocFile(file){
+  const ep = curEp();
+  const fd = new FormData();
+  fd.append("file", file);
+  fd.append("purpose", "file-extract");
+  const up = await fetch(epBase(ep) + "/files", {
+    method:"POST", headers:{ "Authorization":"Bearer " + ep.apiKey }, body: fd
+  });
+  if (!up.ok) throw new Error("文件上传失败 HTTP " + up.status);
+  const upj = await up.json();
+  const ct = await fetch(epBase(ep) + "/files/" + upj.id + "/content", {
+    headers:{ "Authorization":"Bearer " + ep.apiKey }
+  });
+  if (!ct.ok) throw new Error("文件解析失败 HTTP " + ct.status);
+  const ctj = await ct.json();
+  return (ctj.content || "").slice(0, 80000);
+}
+
+/* ================= 附件处理（数量/大小提示全部由常量自动生成） ================= */
+const MB = 1024 * 1024;
+function addFiles(files){
+  for (const f of files){
+    if (pendingFiles.length >= FILE_MAX_COUNT){ toast(`最多上传 ${FILE_MAX_COUNT} 个附件`); break; }
+    const isImg = f.type.startsWith("image/");
+    const ext = (f.name.split(".").pop() || "").toLowerCase();
+    if (isImg){
+      if (f.size > IMG_MAX_SIZE){ toast(`「${f.name}」超过 ${Math.round(IMG_MAX_SIZE/MB)}MB，已跳过`); continue; }
+      const reader = new FileReader();
+      reader.onload = e => { pendingFiles.push({ kind:"image", dataUrl:e.target.result, name:f.name }); renderFileBar(); };
+      reader.readAsDataURL(f);
+    } else if (DOC_EXTS.includes(ext)){
+      if (f.size > DOC_MAX_SIZE){ toast(`「${f.name}」超过 ${Math.round(DOC_MAX_SIZE/MB)}MB，已跳过`); continue; }
+      pendingFiles.push({ kind:"doc", file:f, name:f.name });
+      renderFileBar();
+    } else {
+      toast(`不支持的文件类型：${f.name}`);
+    }
+  }
+}
+function renderFileBar(){
+  imgBar.innerHTML = "";
+  imgBar.classList.toggle("hidden", pendingFiles.length === 0);
+  imgBar.classList.toggle("flex", pendingFiles.length > 0);
+  pendingFiles.forEach((it, i) => {
+    if (it.kind === "image"){
+      const t = document.createElement("div"); t.className = "thumb";
+      t.innerHTML = `<img src="${it.dataUrl}"><button title="移除">×</button>`;
+      t.querySelector("button").onclick = () => { pendingFiles.splice(i,1); renderFileBar(); };
+      imgBar.appendChild(t);
+    } else {
+      const t = document.createElement("div"); t.className = "fchip";
+      t.innerHTML = `📄 <span>${escapeHtml(it.name)}</span><span class="fs">${(it.file.size/1024).toFixed(0)}KB</span><button title="移除">×</button>`;
+      t.querySelector("button").onclick = () => { pendingFiles.splice(i,1); renderFileBar(); };
+      imgBar.appendChild(t);
+    }
+  });
+  imgCount.textContent = `附件 ${pendingFiles.length} / ${FILE_MAX_COUNT}`;
+}
+$("#attachBtn").onclick = () => fileInput.click();
+fileInput.onchange = () => { addFiles(fileInput.files); fileInput.value = ""; };
+inputEl.addEventListener("paste", e => { if (e.clipboardData.files.length){ e.preventDefault(); addFiles(e.clipboardData.files); } });
+["dragenter","dragover"].forEach(ev => inputCard.addEventListener(ev, e => { e.preventDefault(); inputCard.classList.add("dragover"); }));
+["dragleave","drop"].forEach(ev => inputCard.addEventListener(ev, e => { e.preventDefault(); inputCard.classList.remove("dragover"); }));
+inputCard.addEventListener("drop", e => addFiles(e.dataTransfer.files));
+
+/* ================= 输入框 ================= */
+function autoResize(){ inputEl.style.height = "auto"; inputEl.style.height = Math.min(inputEl.scrollHeight, 160) + "px"; }
+inputEl.addEventListener("input", autoResize);
+inputEl.addEventListener("keydown", e => {
+  if (e.key === "Enter" && !e.shiftKey && !e.isComposing){ e.preventDefault(); send(); }
+});
+
+/* ================= 清空（恢复欢迎页） ================= */
+$("#clearBtn").onclick = () => {
+  if (isStreaming){ toast("生成中，无法清空"); return; }
+  history = []; pendingFiles = []; renderFileBar();
+  chatEl.querySelectorAll(".msg").forEach(m => m.remove());
+  showWelcome();
+  toast("对话已清空");
+};
+
+/* ================= 消息渲染 ================= */
+function hideWelcome(){ stopChipRotate(); const w = $("#welcome"); if (w) w.remove(); }
+function showWelcome(){
+  if ($("#welcome")) return;
+  const div = document.createElement("div");
+  div.id = "welcome";
+  div.className = "msg pt-10 pb-6 text-center";
+  div.innerHTML = `
+      <div class="mx-auto mb-6 logo" style="width:72px;height:72px;border-radius:22px;font-size:34px">K</div>
+      <h2 class="grotesk text-4xl md:text-5xl font-bold mb-3">你好，我是 <span class="grad-text">Kimi</span></h2>
+      <p class="text-sm mb-2" style="color:var(--dim)">支持图片 + 文档（PDF / Word / Excel / PPT / TXT / MD / 代码等）解析</p>
+      <p class="text-xs mb-8" style="color:var(--faint)">对话仅保存在当前页面，刷新后清空</p>
+      <div class="grid md:grid-cols-2 gap-3 max-w-2xl mx-auto text-left" id="chipGrid"></div>`;
+  chatEl.prepend(div);
+  startChipRotate();
+}
+function renderUserMsg(text, files){
+  const div = document.createElement("div");
+  div.className = "msg flex";
+  const imgs = files.filter(f => f.kind === "image");
+  const docs = files.filter(f => f.kind === "doc");
+  let inner = "";
+  if (imgs.length) inner += '<div class="user-imgs">' + imgs.map(i => `<img src="${i.dataUrl}">`).join("") + "</div>";
+  if (docs.length) inner += "<div>" + docs.map(d => `<span class="file-chip">📄 ${escapeHtml(d.name)}</span>`).join("") + "</div>";
+  inner += `<div>${escapeHtml(text).replace(/\n/g,"<br>")}</div>`;
+  div.innerHTML = `<div class="user-bubble">${inner}</div>`;
+  chatEl.appendChild(div); scrollBottom(true);
+}
+function renderAIPlaceholder(){
+  const ep = curEp();
+  const div = document.createElement("div");
+  div.className = "msg flex gap-3";
+  div.innerHTML = `<div class="ai-avatar">K</div>
+    <div class="flex-1 min-w-0">
+      <div class="text-[11px] mb-1 grotesk" style="color:var(--dim)">${escapeHtml((ep ? ep.label + " · " : "") + (currentModel || ""))}</div>
+      <div class="think-slot"></div>
+      <div class="md"><div class="dots"><i></i><i></i><i></i></div></div>
+    </div>`;
+  chatEl.appendChild(div); scrollBottom(true);
+  return { mdEl: div.querySelector(".md"), thinkSlot: div.querySelector(".think-slot") };
+}
+
+/* ================= 发送 ================= */
+sendBtn.onclick = send;
+stopBtn.onclick = () => { if (abortCtrl) abortCtrl.abort(); };
+function setStreaming(v){
+  isStreaming = v;
+  sendBtn.classList.toggle("hidden", v);
+  stopBtn.classList.toggle("hidden", !v);
+}
+
+async function send(){
+  if (isStreaming) return;
+  if (!curEp() || !currentModel){ toast("暂无可用模型"); return; }
+  let text = inputEl.value.trim();
+  if (!text && pendingFiles.length === 0) return;
+  if (!text && pendingFiles.length > 0) text = "请分析这个文件/图片。";
+
+  const files = pendingFiles.slice();
+  const imgs = files.filter(f => f.kind === "image");
+  const docs = files.filter(f => f.kind === "doc");
+
+  hideWelcome();
+  renderUserMsg(text, files);
+  inputEl.value = ""; autoResize();
+  pendingFiles = []; renderFileBar();
+  setStreaming(true);
+
+  const { mdEl, thinkSlot } = renderAIPlaceholder();
+  let full = "", thinking = "", started = false;
+  const renderLive = () => {
+    mdEl.innerHTML = marked.parse(full);
+    const c = document.createElement("span"); c.className = "cursor";
+    mdEl.appendChild(c); scrollBottom();
+  };
+  const renderThink = () => {
+    thinkSlot.innerHTML = thinking
+      ? `<div class="think-box"><b>思考过程</b><br>${escapeHtml(thinking.slice(-1200))}</div>` : "";
+  };
+
+  try{
+    abortCtrl = new AbortController();
+
+    let finalText = text;
+    for (const d of docs){
+      mdEl.innerHTML = `<div class="dots"><i></i><i></i><i></i></div><div class="text-xs mt-1" style="color:var(--dim)">正在解析「${escapeHtml(d.name)}」…</div>`;
+      const content = await parseDocFile(d.file);
+      finalText = `[文件：${d.name}]\n${content}\n\n[用户问题]\n` + text;
+    }
+
+    let userMsg;
+    if (imgs.length){
+      const content = imgs.map(i => ({ type:"image_url", image_url:{ url:i.dataUrl } }));
+      content.push({ type:"text", text: finalText });
+      userMsg = { role:"user", content };
+    } else {
+      userMsg = { role:"user", content: finalText };
+    }
+    history.push(userMsg);
+
+    const baseBody = {
+      model: currentModel,
+      messages: [{ role:"system", content:SYSTEM_PROMPT }, ...history],
+      max_tokens: 8192
+    };
+
+    mdEl.innerHTML = '<div class="dots"><i></i><i></i><i></i></div>';
+    let resp = await postChat({ ...baseBody, stream:true });
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+    let buffer = "";
+    while (true){
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream:true });
+      let idx;
+      while ((idx = buffer.indexOf("\n")) >= 0){
+        const line = buffer.slice(0, idx).trim();
+        buffer = buffer.slice(idx + 1);
+        if (!line.startsWith("data:")) continue;
+        const data = line.slice(5).trim();
+        if (data === "[DONE]") continue;
+        try{
+          const { content, thinking: tk } = extractDelta(JSON.parse(data));
+          if (tk){ thinking += tk; renderThink(); }
+          if (content){
+            if (!started){ mdEl.innerHTML = ""; started = true; }
+            full += content; renderLive();
+          }
+        }catch(e){}
+      }
+    }
+
+    if (!full && !thinking){
+      resp = await postChat({ ...baseBody, stream:false });
+      const j = await resp.json();
+      const msg = j?.choices?.[0]?.message || {};
+      if (typeof msg.reasoning_content === "string") thinking = msg.reasoning_content;
+      if (typeof msg.content === "string") full = msg.content;
+      if (thinking) renderThink();
+      if (full){ mdEl.innerHTML = ""; started = true; renderLive(); }
+    }
+
+    if (!full && !thinking) throw new Error("模型返回了空内容");
+    thinkSlot.innerHTML = thinking
+      ? `<div class="think-box"><b>思考过程（末尾片段）</b><br>${escapeHtml(thinking.slice(-1200))}</div>` : "";
+    if (full){
+      renderMarkdown(mdEl, full);
+      history.push({ role:"assistant", content:full });
+    } else {
+      mdEl.innerHTML = '<div class="error-box">该模型仅返回了思考过程，无最终回复。</div>';
+    }
+
+  }catch(err){
+    if (full){
+      renderMarkdown(mdEl, full + (err.name === "AbortError" ? "\n\n*（已手动停止）*" : ""));
+      history.push({ role:"assistant", content:full });
+    }
+    if (err.name === "AbortError"){
+      if (!full) mdEl.innerHTML = '<div class="error-box">⏹ 已停止生成。</div>';
+    } else {
+      if (!full) mdEl.innerHTML = "";
+      const eb = document.createElement("div");
+      eb.className = "error-box";
+      if (full) eb.style.marginTop = "10px";
+      eb.textContent = "⚠ 请求失败：" + err.message;
+      mdEl.appendChild(eb);
+      /* 当前模型挂了 → 标 bad，自动切到全局第一个可用（可跨配置） */
+      if (/404|Permission|not found/i.test(err.message)){
+        const ep = curEp();
+        const mm = ep && ep.models.find(x => x.id === currentModel);
+        if (mm) mm.status = "bad";
+        const nxt = findFirstOk();
+        if (nxt){
+          toast(`当前模型不可用，已自动切换到 ${ENDPOINTS[nxt.ep].label}·${nxt.model.name}`);
+          setCurrentModel(nxt.ep, nxt.model.id);
+        }
+        renderModelMenu();
+      }
+    }
+  }finally{
+    setStreaming(false);
+    abortCtrl = null;
+    scrollBottom(true);
+  }
+}
+
+/* ================= 欢迎页：随机推荐卡片（每 10 秒轮换，不重复） ================= */
+const CHIP_POOL = [
+  { e:"💡", t:"用通俗语言解释量子纠缠" },
+  { e:"</>", t:"写一个带注释的快速排序" },
+  { e:"✈", t:"规划一份上海三日游攻略" },
+  { e:"📊", t:"帮我分析一份销售数据报表" },
+  { e:"📝", t:"写一封求职自荐邮件" },
+  { e:"🧠", t:"解释一下什么是机器学习" },
+  { e:"🍜", t:"推荐几道家常快手菜" },
+  { e:"📖", t:"给我讲讲《红楼梦》人物关系" },
+  { e:"💼", t:"帮我准备产品经理面试题" },
+  { e:"🌍", t:"写一篇关于气候变化的科普文" },
+  { e:"🎨", t:"给我一些logo设计的灵感" },
+  { e:"📱", t:"对比一下iPhone和安卓旗舰" },
+  { e:"🏃", t:"制定一个月的减脂计划" },
+  { e:"💰", t:"讲解一下基金定投的原理" },
+  { e:"🎬", t:"推荐几部高分悬疑电影" },
+  { e:"📈", t:"用Python画一个股票走势图" },
+  { e:"🗣", t:"帮我练习英语口语对话" },
+  { e:"🧮", t:"讲解微积分的基本概念" },
+  { e:"🎮", t:"推荐几款休闲解压的游戏" },
+  { e:"📷", t:"教我手机摄影的构图技巧" },
+];
+let chipTimer = null, chipLastIdx = [];
+
+function renderChips(){
+  const grid = document.getElementById("chipGrid");
+  if (!grid) return;
+  let avail = CHIP_POOL.map((c,i)=>i).filter(i => !chipLastIdx.includes(i));
+  if (avail.length < 3){ chipLastIdx = []; avail = CHIP_POOL.map((c,i)=>i); }
+  const picked = [];
+  while (picked.length < 3 && avail.length){
+    const r = Math.floor(Math.random()*avail.length);
+    picked.push(avail.splice(r,1)[0]);
+  }
+  chipLastIdx = picked;
+  grid.innerHTML = "";
+  picked.forEach(i => {
+    const c = CHIP_POOL[i];
+    const b = document.createElement("button");
+    b.className = "chip glass";
+    b.innerHTML = `${c.e} ${escapeHtml(c.t)}`;
+    b.onclick = () => { inputEl.value = c.t; autoResize(); send(); };
+    grid.appendChild(b);
+  });
+  const up = document.createElement("button");
+  up.className = "chip glass";
+  up.innerHTML = "📎 上传文件 / 图片进行分析";
+  up.onclick = () => fileInput.click();
+  grid.appendChild(up);
+}
+function startChipRotate(){
+  stopChipRotate();
+  renderChips();
+  chipTimer = setInterval(renderChips, 10000);
+}
+function stopChipRotate(){ if (chipTimer){ clearInterval(chipTimer); chipTimer = null; } }
+
+/* ================= 启动（附件按钮提示 & 初始计数由常量自动生成） ================= */
+$("#attachBtn").title = `上传文件（图片或文档，最多 ${FILE_MAX_COUNT} 个）`;
+autoResize();
+renderFileBar();          // 初始化计数显示：附件 0 / FILE_MAX_COUNT
+startChipRotate();
+detectAll();
+</script>
+</body>
+</html>
