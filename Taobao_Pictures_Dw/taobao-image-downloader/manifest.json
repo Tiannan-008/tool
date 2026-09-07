@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "淘宝图片下载器",
+  "version": "1.0",
+  "description": "一键提取淘宝商品图片，支持多选、复制、批量下载",
+  "permissions": [
+    "activeTab",
+    "downloads",
+    "clipboardWrite"
+  ],
+  "host_permissions": [
+    "https://item.taobao.com/*",
+    "https://detail.tmall.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://item.taobao.com/*",
+        "https://detail.tmall.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "action": {
+    "default_title": "淘宝图片下载器",
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
+  },
+  "icons": {
+    "128": "icon.png"
+  }
+}
